@@ -1,0 +1,17 @@
+// C4D-DialogResource
+
+DIALOGSTRINGS DLG_ABOUT
+{
+  IDS_DIALOG    "About Batch Render Post Script";
+  IDS_STATIC    "All";
+  IDS_STATIC1   "Developer:";
+  IDS_STATIC10  "Batch Render Post Script";
+  IDS_STATIC2   "Niklas Rosenstein";
+  IDS_STATIC3   "Version:";
+  IDS_STATIC4   "0.1.0";
+  IDS_STATIC5   "E-Mail:";
+  IDS_STATIC6   "rosensteinniklas@gmail.com";
+  IDS_STATIC7   "License:";
+  IDS_STATIC8   "GNU GPL";
+  IDS_STATIC9   "Plugin Name:";
+}

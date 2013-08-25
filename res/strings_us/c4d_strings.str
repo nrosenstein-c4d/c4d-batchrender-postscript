@@ -1,0 +1,15 @@
+STRINGTABLE {
+    STR_BR_NOT_RUNNING  "Batch Render is not running.";
+    STR_ERROR "Error: #";
+    STR_NO_MAIN_METHOD "No main method found.";
+    STR_MAIN_NOT_CALLABLE "main is not callable.";
+    STR_SCRIPT_NOT_COMPILED "Script is not compiled.";
+
+    STR_MENU_FILE "File";
+        STR_MENU_FILE_LOAD "Load ...";
+        STR_MENU_FILE_SAVE "Save ...";
+
+    STR_MENU_ABOUT "About";
+        STR_MENU_ABOUT_SHOW "About ...";
+        STR_MENU_ABOUT_CONTACT "Contact ...";
+}

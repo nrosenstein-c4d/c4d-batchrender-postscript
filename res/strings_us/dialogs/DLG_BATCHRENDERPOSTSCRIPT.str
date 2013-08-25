@@ -1,0 +1,31 @@
+// C4D-DialogResource
+
+DIALOGSTRINGS DLG_BATCHRENDERPOSTSCRIPT
+{
+  IDS_BUTTON          "Compile Script";
+  IDS_BUTTON1         "Button";
+  IDS_BUTTON2         "Button";
+  IDS_BUTTON3         "Button";
+  IDS_BUTTON4         "Button";
+  IDS_BUTTON5         "Open Batch Render";
+  IDS_CHECK           "Check box";
+  IDS_CHECK1          "Check box";
+  IDS_CHECK2          "Running";
+  IDS_DIALOG          "Batch Render Post Script v0.1.0";
+  IDS_STATIC          "All";
+  IDS_STATIC1         "Group";
+  IDS_STATIC10        "Group";
+  IDS_STATIC11        "<Info Text>";
+  IDS_STATIC12        "Options";
+  IDS_STATIC13        "<Info Text>";
+  IDS_STATIC14        "Status:";
+  IDS_STATIC2         "Static text";
+  IDS_STATIC3         "Script";
+  IDS_STATIC4         "Static text";
+  IDS_STATIC5         "Static text";
+  IDS_STATIC6         "Script Actions";
+  IDS_STATIC7         "Group";
+  IDS_STATIC8         "Static text";
+  IDS_STATIC9         "Group";
+  STR_BR_NOT_RUNNING  "Batch Render is not running.";
+}
