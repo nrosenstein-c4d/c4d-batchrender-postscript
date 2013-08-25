@@ -20,7 +20,7 @@ Requirements
 
 Cinema 4D R12+
 
-.. image:: https://raw.github.com/NiklasRosenstein/c4d-brps/master/preview.jpg
+.. image:: preview.jpg
 
 =========== ===============================
 Author      Niklas Rosenstein
