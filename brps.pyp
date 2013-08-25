@@ -1,44 +1,60 @@
 # coding: utf-8
 #
-# Copyright (C) 2012  Niklas Rosenstein
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-""" BatchRenderPostScript - Utility for Cinema 4D's BatchRender
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Copyright (C) 2012-2013,  Niklas Rosenstein
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+# 
+#   Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# 
+#   Redistributions in binary form must reproduce the above copyright notice, this
+#   list of conditions and the following disclaimer in the documentation and/or
+#   other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+BatchRenderPostScript - Utility for Cinema 4D's BatchRender
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    A tool for running Python scripts after the Batch Render has finished
-    rendering.
+A tool for running Python scripts after the Batch Render has finished
+rendering.
 
-    How it works
-    ------------
+How it works
+------------
 
-    When a script was compiled with the dialog and the `Running` checkmarked
-    activated, a thread is started which periodically checks if the Batch
-    Render is done. When this is the case, the script is executed.
+When a script was compiled with the dialog and the `Running` checkmarked
+activated, a thread is started which periodically checks if the Batch
+Render is done. When this is the case, the script is executed.
 
-    .. author:: Niklas Rosenstein <rosensteinniklas@gmail.com>
-    .. version:: 0.1.0
-    .. date:: October 26. 2012
-    .. license:: GNU GPL
-    .. homepage:: https://github.com/NiklasRosenstein/c4d-brps
-    """
+Changelog
+---------
+
+- `0.1.0`: Initial version
+- `0.1.1`: Removed `BrpsThread` class and used `GeDialog.Timer()` instead.
+
+.. author:: Niklas Rosenstein <rosensteinniklas@gmail.com>
+.. version:: 0.1.0
+.. date:: October 26. 2012
+.. license:: GNU GPL
+.. homepage:: https://github.com/NiklasRosenstein/c4d-brps
+"""
 
 __author__ = {'name': 'Niklas Rosenstein',
               'email': 'rosensteinniklas@gmail.com'}
-__license__ = 'GNU GPL'
-__version__ = (0, 1, 0)
-__changed__ = (10, 26, 2012)
+__license__ = 'BSD 2-Clause'
+__version__ = (0, 1, 1)
+__changed__ = (8, 26, 2013)
 
 import os
 import re
@@ -115,41 +131,6 @@ for k in options.keys():
     del options[k]
 
 
-class BrpsThread(threading.Thread):
-
-    def __init__(self, method, sleeptime=1.0):
-        super(BrpsThread, self).__init__()
-        self.method = method
-        self.sleeptime = sleeptime
-        self.running = False
-
-    def work_out(self):
-        br = GetBatchRender()
-        if not br.IsRendering():
-
-            try:
-                self.method()
-            except Exception as e:
-                print
-                print "Batch Render Post Script: Exception occured."
-                traceback.print_exc()
-            self.abandon()
-
-    def abandon(self):
-        self.running = False
-
-    def is_running(self):
-        return self.running
-
-  # threading.Thread
-
-    def run(self):
-        self.running = True
-
-        while self.running:
-            self.work_out()
-            time.sleep(self.sleeptime)
-
 class BrpsCommand(c4d.plugins.CommandData):
 
     PLUGIN_ID = 1029245
@@ -214,14 +195,13 @@ class BrpsDialog(c4d.gui.GeDialog):
         self.SetBool(symbols.CHK_RUNNING, not not v)
 
     def enable_running(self, value, text, *args):
-        value = not not value
+        if not value:
+            self.SetBool(symbols.CHK_RUNNING, False)
+            self.abandon_thread()
         if isinstance(text, int):
             text = GeLoadString(text, *args)
 
-        if not value:
-            self.SetBool(symbols.CHK_RUNNING, False)
-
-        self.Enable(symbols.CHK_RUNNING, value)
+        self.Enable(symbols.CHK_RUNNING, not not value)
         self.SetString(symbols.STATIC_INFO, text)
         self.LayoutChanged(symbols.GRP_OPTIONS)
 
@@ -324,21 +304,15 @@ class BrpsDialog(c4d.gui.GeDialog):
             self.SetMultiLinePos(symbols.EDT_SCRIPT, line, column)
 
     def abandon_thread(self):
-        if self.thread:
-            self.thread.abandon()
-        self.thread = None
+        self.SetTimer(0)
 
     def try_run(self):
-        do_abandon = not self.post_method
-        do_abandon = do_abandon or (not self.running)
+        if self.GetBool(symbols.CHK_RUNNING):
+            self.SetTimer(200)
+        else:
+            self.SetTimer(0)
 
-        if do_abandon:
-            self.abandon_thread()
-        elif self.running and not (self.thread and self.thread.is_running()):
-            self.thread = BrpsThread(self.post_method)
-            self.thread.start()
-
-  # c4d.gui.GeDialogl
+  # c4d.gui.GeDialog
 
     def CreateLayout(self):
         # Create the MenuBar items.
@@ -415,6 +389,17 @@ class BrpsDialog(c4d.gui.GeDialog):
             return super(BrpsDialog, self).SetMultiLinePos(id, line, column)
         else:
             return True
+
+    def Timer(self, msg):
+        br = GetBatchRender()
+        if not br.IsRendering() and self.GetBool(symbols.CHK_RUNNING):
+            try:
+                self.post_method()
+            except Exception as e:
+                print
+                print "Batch Render Post Script: Exception occured."
+                traceback.print_exc()
+            self.abandon_thread()
 
 class BrpsAboutDialog(c4d.gui.GeDialog):
 
