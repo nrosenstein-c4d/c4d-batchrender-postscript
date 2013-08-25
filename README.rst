@@ -25,5 +25,6 @@ Cinema 4D R12+
 =========== ===============================
 Author      Niklas Rosenstein
 E-Mail      rosensteinniklas@gmail.com
-License     GNU GPL
+Websize     http://niklasrosenstein.de/
+License     BSD 2-Clause
 =========== ===============================
