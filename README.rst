@@ -9,8 +9,8 @@ And introductory video to v0.1.0 can be found on YouTube: http://youtu.be/lSed-V
 lil Changelog
 -------------
 
-- `0.1.0`: Initial version
-- `0.1.1`: Internal change, no visible modifications
+- ``0.1.0``: Initial version
+- ``0.1.1``: Internal change, no visible modifications
 
 Features
 --------
