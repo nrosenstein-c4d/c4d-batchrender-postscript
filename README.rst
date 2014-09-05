@@ -4,8 +4,6 @@ Batch Render Post Script 0.1.1
 This is an open source Python plugin for MAXON's Cinema 4D. It enables you to
 run a Python script after Cinema 4D's batch-render is done with rendering.
 
-And introductory video to v0.1.0 can be found on YouTube: http://youtu.be/lSed-V8Vv_8
-
 lil Changelog
 -------------
 
